@@ -35,7 +35,15 @@ for((;;)){
 }
 
 read -rp 'Enter a new user name (leave blank to skip): '
-[[ $REPLY ]]&&{ passwd -l root; useradd -mG wheel "$REPLY"; }
+[[ $REPLY ]]&&{
+  passwd -l root &>/dev/null
+  printf 'Locked root user password\n'
+
+  id "$REPLY" &>/dev/null&&{ userdel "$REPLY"; rm -r /home/"$REPLY"; }&& :
+  useradd -mG wheel "$REPLY"
+  passwd -d "$REPLY" &>/dev/null
+  printf 'User %s created without password\n' "$REPLY"
+}
 
 systemctl enable bluetooth NetworkManager
 
