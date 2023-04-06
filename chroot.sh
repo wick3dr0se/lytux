@@ -22,8 +22,17 @@ cat <<EOF
 ::1          localhost
 EOF
 
-read -srp 'Enter desired root user password: '
-printf '%s\n%s\n' "$REPLY" "$REPLY" | passwd
+for((;;)){
+  read -srp 'Enter desired root user password: '
+  read -srp 'Confirm password: ' CONFIRM
+
+  if [[ $REPLY == $CONFIRM ]]; then
+    printf '%s\n%s' "$REPLY" "$CONFIRM"| passwd
+    break
+  else
+    printf 'Password mismatch.. Try again\n'
+  fi
+}
 
 read -rp 'Enter a new user name (leave blank to skip): '
 [[ $REPLY ]]&&{ passwd -l root; useradd -mG wheel "$REPLY"; }
