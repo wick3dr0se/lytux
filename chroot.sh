@@ -2,7 +2,7 @@
 
 . helpers.sh
 
-ln -sf /usr/share/zoneinfo/US /etc/localtime
+ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 hwclock --systohc
 
