@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. helpers.sh
+
 packages=(
   'kitty' # terminal
 
@@ -23,6 +25,10 @@ packages=(
   'xorg-xinit' # start x
   'i3' # i3 window manager
   'i3blocks' # i3bar blocks
+#-
+
+#- dependencies
+  'sed'
 #-
 )
 
@@ -52,5 +58,5 @@ pacstrap -MG /mnt "${packages[@]}"
 
 genfstab -U /mnt >/mnt/etc/fstab
 
-cp helpers.sh chroot.sh /mnt/
+cp chroot.sh helpers.sh /mnt/
 arch-chroot /mnt ./chroot.sh
