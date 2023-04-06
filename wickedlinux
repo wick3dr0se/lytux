@@ -72,4 +72,4 @@ pacstrap -MG /mnt "${packages[@]}"
 genfstab -U /mnt >/mnt/etc/fstab
 
 cp chroot.sh helpers.sh /mnt/
-arch-chroot /mnt ./chroot.sh
+arch-chroot /mnt bash chroot.sh
