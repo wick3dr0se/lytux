@@ -3,7 +3,20 @@
 . helpers.sh
 
 packages=(
-  'kitty' # terminal
+#- dependencies
+  'sed' # stream editor
+#-
+
+#- core (essential)
+  'base' # system packages
+  'linux' # kernel
+  'linux-headers' # kernel headers
+  'sudo' # superuser do
+#-
+
+#- console
+  'kitty' # terminal emulator
+#-
 
 #- audio
   'pulseaudio' # audio server
@@ -27,9 +40,9 @@ packages=(
   'i3blocks' # i3bar blocks
 #-
 
-#- dependencies
-  'sed'
-#-
+#- text editor
+  'vim' # vi improved
+#
 )
 
 (( UEFI ))|| packages+=('grub' 'os-prober') # bootloader
