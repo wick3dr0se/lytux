@@ -46,7 +46,7 @@ lsblk -o NAME,FSTYPE,MOUNTPOINTS,SIZE
 read -rp 'Enter desired disk block device path e.g. /dev/sda, to auto-partition (consume entire disk); Leave blank to skip/manually partition: '
 [[ $REPLY ]]&&{ diskBlockPath="/dev/${REPLY#/dev/}"; . auto-partition.sh; }
 
-[[ -d /mnt/root ]]||{ printf 'Root filesystem not mounted on /mnt'; exit 1; }
+mountpoint -q /mnt||{ printf 'Root filesystem not mounted on /mnt\n'; exit 1; }
 
 pacstrap -MG /mnt "${packages[@]}"
 
