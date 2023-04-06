@@ -23,15 +23,15 @@ cat <<EOF
 EOF
 
 read -srp 'Enter desired root user password: '
-printf '%s\n%s\n' "$REPLY" | passwd
+printf '%s\n%s\n' "$REPLY" "$REPLY" | passwd
 
 read -rp 'Enter a new user name (leave blank to skip): '
-[[ $REPLY ]]&&{ passwd -l root; useradd -mG sudo "$REPLY"; }
+[[ $REPLY ]]&&{ passwd -l root; useradd -mG wheel "$REPLY"; }
 
 systemctl enable bluetooth NetworkManager
 
 read -rp "Install $bootloader bootloader? [Y\n]: "
-true_reply&&{
+REPLY="${REPLY:-y}"; true_reply&&{
   if (( UEFI )); then
     bootctl --path=/boot install
 
@@ -45,7 +45,7 @@ true_reply&&{
       "options  root=$rootBlockPath rw quiet"
     )
     for _ in "${loaderEntry[@]}"; do
-      printf '%s\n' "$_" >/boot/loader/entries/wicked.conf
+      printf '%s\n' "$_" >>/boot/loader/entries/wicked.conf
     done
 
     loaderConf=(
@@ -54,7 +54,7 @@ true_reply&&{
       'console-mode max'
     )
     for _ in "${loaderConf[@]}"; do
-      printf '%s\n' "$_" >/boot/loader/loader.conf
+      printf '%s\n' "$_" >>/boot/loader/loader.conf
     done
   else
     grub-install --target=i386-pc "$rootBlockPath"
