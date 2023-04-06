@@ -2,17 +2,17 @@
 
 . helpers.sh
 
-ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+ln -sf /usr/share/zoneinfo/US /etc/localtime
 
 hwclock --systohc
 
 read -rp 'Enter a locale [en_US]: '
 locale="${REPLY#.*}" locale="${locale:-en_US}"
 
-sed -i "s/^#($locale.UTF-8)/\1/" /etc/locale.gen
+sed "/$locale.UTF-8/s/^#//" -i /etc/locale.gen
 locale-gen
 
-printf 'LANG=%s.UTF-8' "$locale" >/etc/locale.conf
+printf 'UTC\n' >/etc/locale.conf
 
 read -rp 'Enter desired hostname (system identity): '
 printf '%s\n' "$REPLY" >/etc/hostname
