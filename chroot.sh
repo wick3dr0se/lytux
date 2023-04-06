@@ -35,14 +35,11 @@ REPLY="${REPLY:-y}"; true_reply&&{
   if (( UEFI )); then
     bootctl --path=/boot install
 
-    read -rp 'Enter root block device path, e.g. /dev/sdX2: '
-    rootBlockPath="/dev/${REPLY#/dev/}"
-
     loaderEntry=(
       'title  WickedLinux'
       'linux  /vmlinuz-linux'
       'initrd /initramfs-linux.img'
-      "options  root=$rootBlockPath rw quiet"
+      "options  root=$(df -h /mnt| awk 'FNR==2 {print $1}') rw quiet"
     )
     for _ in "${loaderEntry[@]}"; do
       printf '%s\n' "$_" >>/boot/loader/entries/wicked.conf
