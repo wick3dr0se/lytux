@@ -47,16 +47,17 @@ read -rp 'Enter a new user name (leave blank to skip): '
 
 systemctl enable bluetooth NetworkManager
 
-read -rp "Install $bootloader bootloader? [Y\n]: "
+read -rp "Install $BOOTLOADER bootloader? [Y\n]: "
 REPLY="${REPLY:-y}"; true_reply&&{
-  if (( UEFI )); then
+  if [[ $BOOTLOADER == systemd-boot ]]; then
     bootctl --path=/boot install
 
     loaderEntry=(
       'title  WickedLinux'
       'linux  /vmlinuz-linux'
+      "initrd /$UCODE.img"
       'initrd /initramfs-linux.img'
-      "options  root=$(df -h /mnt| awk 'FNR==2 {print $1}') rw quiet"
+      "options root=$(df -h /mnt| awk 'FNR==2 {print $1}') rw quiet"
     )
     for _ in "${loaderEntry[@]}"; do
       printf '%s\n' "$_" >>/boot/loader/entries/wicked.conf

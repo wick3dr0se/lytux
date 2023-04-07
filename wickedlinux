@@ -45,18 +45,11 @@ packages=(
 #
 )
 
-(( UEFI ))|| packages+=('grub' 'os-prober') # bootloader
-
-while read -r line; do
-  if [[ $line == 'vendor_id'* ]]; then
-    vendor="${line#*:}"
-    case "${vendor//[[:space:]]}" in
-      AuthenticAMD) packages+=('amd-ucode');; # amd microcode updates
-      GenuineIntel) packages+=('intel-ucode');; # intel microcode udpates
-    esac
-    break
-  fi
-done </proc/cpuinfo
+[[ $BOOTLOADER == grub ]]&& packages+=('grub' 'os-prober') # bootloader
+case $UCODE in
+  amd-ucode) packages+=('amd-ucode');; # amd microcode updates
+  intel-ucode) packages+=('intel-ucode');; # intel microcode updates
+esac
 
 #timedatectl set-ntp true
 
