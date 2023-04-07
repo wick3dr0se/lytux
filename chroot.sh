@@ -55,12 +55,13 @@ REPLY="${REPLY:-y}"; true_reply&&{
     bootctl --path=/boot install
 
     loaderEntry=(
-      'title  WickedLinux'
-      'linux  /vmlinuz-linux'
+      'title WickedLinux'
+      'linux /vmlinuz-linux'
       "initrd /$UCODE.img"
       'initrd /initramfs-linux.img'
-      "options root=$(df -h /mnt| awk 'FNR==2 {print $1}') rw quiet"
+      "options root=$(df -h /| awk 'FNR==2 {print $1}') rw quiet"
     )
+    [[ -d /boot/loader/entries/wicked.conf ]]&& rm /boot/loader/entries/wicked.conf
     for _ in "${loaderEntry[@]}"; do
       printf '%s\n' "$_" >>/boot/loader/entries/wicked.conf
     done
@@ -70,6 +71,7 @@ REPLY="${REPLY:-y}"; true_reply&&{
       'timeout 3'
       'console-mode max'
     )
+    [[ -d /boot/loader/loader.conf ]]&& rm /boot/loader/loader.conf
     for _ in "${loaderConf[@]}"; do
       printf '%s\n' "$_" >>/boot/loader/loader.conf
     done
@@ -78,4 +80,4 @@ REPLY="${REPLY:-y}"; true_reply&&{
   fi
 }
 
-umount -R /mnt
+umount -R /
