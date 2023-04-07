@@ -77,3 +77,5 @@ REPLY="${REPLY:-y}"; true_reply&&{
     grub-install --target=i386-pc "$rootBlockPath"
   fi
 }
+
+umount -R /mnt
