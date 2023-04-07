@@ -12,7 +12,7 @@ locale="${REPLY#.*}" locale="${locale:-en_US}"
 sed "/$locale.UTF-8/s/^#//" -i /etc/locale.gen
 locale-gen
 
-printf 'UTC\n' >/etc/locale.conf
+printf 'LANG=%s.UTF-8\n' "$locale" >/etc/locale.conf
 
 read -rp 'Enter desired hostname (system identity): '
 printf '%s\n' "$REPLY" >/etc/hostname
