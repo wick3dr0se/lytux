@@ -29,7 +29,7 @@ for((;;)){
 
   if [[ $REPLY&& $REPLY == $CONFIRM ]]; then
     printf '%s\n%s' "$REPLY" "$CONFIRM"| passwd &>/dev/null
-    printf '\n'
+    printf '\nPassword successfully set\n'
     break
   else
     printf 'Password mismatch.. Try again\n'
