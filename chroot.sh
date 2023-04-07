@@ -24,10 +24,12 @@ EOF
 
 for((;;)){
   read -srp 'Enter desired root user password: '
+  [[ $REPLY ]]&& printf '\n'
   read -srp 'Confirm password: ' CONFIRM
 
-  if [[ $REPLY == $CONFIRM ]]; then
-    printf '%s\n%s' "$REPLY" "$CONFIRM"| passwd
+  if [[ $REPLY&& $REPLY == $CONFIRM ]]; then
+    printf '%s\n%s' "$REPLY" "$CONFIRM"| passwd &>/dev/null
+    printf '\n'
     break
   else
     printf 'Password mismatch.. Try again\n'
