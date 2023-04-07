@@ -60,6 +60,7 @@ read -rp 'Enter desired disk block device path e.g. /dev/sda, to auto-partition 
 
 mountpoint -q /mnt||{ printf 'Root filesystem not mounted on /mnt\n'; exit 1; }
 
+[[ -f /mnt/boot/"$UCODE".img ]]&& rm /mnt/boot/"$UCODE".img
 pacstrap -MG /mnt "${packages[@]}"
 
 genfstab -U /mnt >/mnt/etc/fstab
