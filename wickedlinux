@@ -58,12 +58,13 @@ esac
 #timedatectl set-ntp true
 
 lsblk -o NAME,FSTYPE,MOUNTPOINTS,SIZE
-
 read -rp 'Automatically partition (consume entire disk)? [y/N]: '; true_reply&& . auto-part.sh
 
 mountpoint -q /mnt||{ printf 'Root filesystem not mounted on /mnt\n'; exit 1; }
 
 [[ -f /mnt/boot/"$UCODE".img ]]&& rm /mnt/boot/"$UCODE".img
+[[ -f /mnt/boot/vmlinuz-linux ]]&& rm /mnt/boot/vmlinuz-linux
+[[ -f /mnt/boot/initramfs-linux.img ]]&& rm /mnt/boot/initram*
 pacstrap -MG /mnt "${packages[@]}"
 
 genfstab -U /mnt >/mnt/etc/fstab
