@@ -49,7 +49,7 @@ packages=(
 #
 )
 
-[[ $BOOTLOADER == grub ]]&& packages+=('grub' 'os-prober') # bootloader
+[[ $BOOTLOADER == 'grub' ]]&& packages+=('grub' 'os-prober') # bootloader
 case $UCODE in
   amd-ucode) packages+=('amd-ucode');; # amd microcode updates
   intel-ucode) packages+=('intel-ucode');; # intel microcode updates

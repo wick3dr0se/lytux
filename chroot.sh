@@ -27,7 +27,7 @@ for((;;)){
   [[ $REPLY ]]&& printf '\n'
   read -srp 'Confirm password: ' CONFIRM
 
-  if [[ $REPLY&& $REPLY == $CONFIRM ]]; then
+  if [[ $REPLY&& $REPLY == "$CONFIRM" ]]; then
     printf '%s\n%s' "$REPLY" "$CONFIRM"| passwd &>/dev/null
     printf '\nPassword successfully set\n'
     break
@@ -41,7 +41,7 @@ read -rp 'Enter a new user name (leave blank to skip): '
   passwd -l root &>/dev/null
   printf 'Locked root user password\n'
 
-  id "$REPLY" &>/dev/null&&{ userdel "$REPLY"; rm -r /home/"$REPLY"; }&& :
+  id "$REPLY" &>/dev/null&&{ userdel "$REPLY"; rm -r /home/"${REPLY:?}"; }&& :
   useradd -mG wheel "$REPLY"
   passwd -d "$REPLY" &>/dev/null
   printf 'User %s created without password\n' "$REPLY"
@@ -51,7 +51,7 @@ systemctl enable bluetooth NetworkManager
 
 read -rp "Install $BOOTLOADER bootloader? [Y\n]: "
 REPLY="${REPLY:-y}"; true_reply&&{
-  if [[ $BOOTLOADER == systemd-boot ]]; then
+  if [[ $BOOTLOADER == 'systemd-boot' ]]; then
     bootctl --path=/boot install
 
     loaderEntry=(
