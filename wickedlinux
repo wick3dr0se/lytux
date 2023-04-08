@@ -55,8 +55,6 @@ case $UCODE in
   intel-ucode) packages+=('intel-ucode');; # intel microcode updates
 esac
 
-#timedatectl set-ntp true
-
 lsblk -o NAME,FSTYPE,MOUNTPOINTS,SIZE
 read -rp 'Automatically partition (consume entire disk)? [y/N]: '; true_reply&& . auto-part.sh
 
