@@ -60,7 +60,7 @@ REPLY="${REPLY:-y}"; true_reply&&{
       'initrd /initramfs-linux.img'
       "options root=$(df -h /| awk 'FNR==2 {print $1}') rw quiet"
     )
-    [[ -d /boot/loader/entries/wicked.conf ]]&& rm /boot/loader/entries/wicked.conf
+    [[ -f /boot/loader/entries/wicked.conf ]]&& rm /boot/loader/entries/wicked.conf
     for _ in "${loaderEntry[@]}"; do
       printf '%s\n' "$_" >>/boot/loader/entries/wicked.conf
     done
@@ -70,7 +70,7 @@ REPLY="${REPLY:-y}"; true_reply&&{
       'timeout 3'
       'console-mode max'
     )
-    [[ -d /boot/loader/loader.conf ]]&& rm /boot/loader/loader.conf
+    [[ -f /boot/loader/loader.conf ]]&& rm /boot/loader/loader.conf
     for _ in "${loaderConf[@]}"; do
       printf '%s\n' "$_" >>/boot/loader/loader.conf
     done
