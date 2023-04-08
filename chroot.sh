@@ -55,7 +55,7 @@ REPLY="${REPLY:-y}"; true_reply&&{
     bootctl --path=/boot install
 
     loaderEntry=(
-      'title WickedLinux'
+      'title Wicked Linux'
       'linux /vmlinuz-linux'
       "initrd /$UCODE.img"
       'initrd /initramfs-linux.img'
@@ -79,5 +79,3 @@ REPLY="${REPLY:-y}"; true_reply&&{
     grub-install --target=i386-pc "$rootBlockPath"
   fi
 }
-
-umount -R /
