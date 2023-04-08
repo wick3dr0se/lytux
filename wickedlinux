@@ -65,5 +65,6 @@ pacstrap -MG /mnt "${packages[@]}"
 
 genfstab -U /mnt >/mnt/etc/fstab
 
-cp chroot.sh helpers.sh /mnt/
+cp {chroot,helpers}.sh /mnt/
+cp -r /etc/{pacman.conf,pacman.d} /mnt/etc/
 arch-chroot /mnt bash chroot.sh
