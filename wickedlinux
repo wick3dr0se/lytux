@@ -43,6 +43,10 @@ packages=(
 #- text editor
   'vim' # vi improved
 #
+
+#- browser
+  'firefox'
+#
 )
 
 [[ $BOOTLOADER == grub ]]&& packages+=('grub' 'os-prober') # bootloader
