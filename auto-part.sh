@@ -1,7 +1,10 @@
 #!/bin/bash
 # automatic partitioning script
 
-if (( UEFI )); then
+read -rp 'Enter desired disk block device path, e.g. /dev/sda (leave blank to skip/manually partition): ' diskBlockPath 
+diskBlockPath="/dev/${diskBlockPath#/dev/}"
+
+if [[ $BOOTLOADER == 'system-boot' ]]; then
   # create uefi gpt partition table
   parted "$diskBlockPath" mklabel gpt
   # create efi system boot partition

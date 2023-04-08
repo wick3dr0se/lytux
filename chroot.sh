@@ -6,29 +6,28 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 hwclock --systohc
 
-read -rp 'Enter a locale [en_US]: '
-locale="${REPLY#.*}" locale="${locale:-en_US}"
+read -rp 'Enter a locale [en_US]: ' locale
+locale="${locale#.*}" locale="${locale:-en_US}"
 
-sed "/$locale.UTF-8/s/^#//" -i /etc/locale.gen
-locale-gen
+sed "/$locale.UTF-8/s/^#//" -i /etc/locale.gen; locale-gen
 
 printf 'LANG=%s.UTF-8\n' "$locale" >/etc/locale.conf
 
-read -rp 'Enter desired hostname (system identity): '
-printf '%s\n' "$REPLY" >/etc/hostname
+read -rp 'Enter desired hostname (system identity): ' hostname
+printf '%s\n' "$hostname" >/etc/hostname
 
-cat <<EOF
+cat <<HOSTS >/etc/hosts
 127.0.0.1    localhost  
 ::1          localhost
-EOF
+HOSTS
 
 for((;;)){
-  read -srp 'Enter desired root user password: '
-  [[ $REPLY ]]&& printf '\n'
-  read -srp 'Confirm password: ' CONFIRM
+  read -srp 'Enter desired root user password: ' rootPass
+  [[ $rootPass ]]&& printf '\n'
+  read -srp 'Confirm password: ' rootPassConfirm
 
-  if [[ $REPLY&& $REPLY == "$CONFIRM" ]]; then
-    printf '%s\n%s' "$REPLY" "$CONFIRM"| passwd &>/dev/null
+  if [[ $rootPass&& $rootPass == "$rootPassConfirm" ]]; then
+    printf '%s\n%s' "$rootPass" "$rootPass"| passwd &>/dev/null
     printf '\nPassword successfully set\n'
     break
   else
@@ -36,15 +35,15 @@ for((;;)){
   fi
 }
 
-read -rp 'Enter a new user name (leave blank to skip): '
-[[ $REPLY ]]&&{
+read -rp 'Enter a new user name (leave blank to skip): ' username
+[[ $username ]]&&{
   passwd -l root &>/dev/null
   printf 'Locked root user password\n'
 
-  id "$REPLY" &>/dev/null&&{ userdel "$REPLY"; rm -r /home/"${REPLY:?}"; }&& :
-  useradd -mG wheel "$REPLY"
-  passwd -d "$REPLY" &>/dev/null
-  printf 'User %s created without password\n' "$REPLY"
+  id "$username" &>/dev/null&&{ userdel "$username"; rm -r /home/"${username:?}"; }&& :
+  useradd -mG wheel "$username"
+  passwd -d "$username" &>/dev/null
+  printf 'User %s created without password\n' "$username"
 }
 
 systemctl enable bluetooth NetworkManager
@@ -76,6 +75,6 @@ REPLY="${REPLY:-y}"; true_reply&&{
       printf '%s\n' "$_" >>/boot/loader/loader.conf
     done
   else
-    grub-install --target=i386-pc "$rootBlockPath"
+    grub-install --target=i386-pc "$(df -h /| awk 'FNR==2 {print $1}')"
   fi
 }
