@@ -20,24 +20,20 @@ packages=(
 
 #- audio
   'pulseaudio' # audio server
-  'pavucontrol' # audio ui
 #-
 
 #- networking
   'networkmanager' # wifi
-  'network-manager-applet' # wifi ui
 #-
 
 #- bluetooth
   'bluez' # bluetooth protocol stack
-  'blueberry' # bluetooth ui
 #-
 
 #- window manager/desktop environment
-  'xorg-server' # x server
-  'xorg-xinit' # start x
-  'i3' # i3 window manager
-  'i3blocks' # i3bar blocks
+  'hyprland' # compositor/wm
+  'hyprpapr' # wallpaper setter
+  'waybar' # status bar
 #-
 
 #- text editor
