@@ -1,8 +1,8 @@
 arch-install-scripts
-archinstall
 b43-fwcutter
 base
 bind
+bluez
 brltty
 broadcom-wl
 btrfs-progs
@@ -34,10 +34,13 @@ gptfdisk
 grub
 hdparm
 hyperv
+hyprland
+hyprpaper
 irssi
 iw
 iwd
 jfsutils
+kitty
 kitty-terminfo
 less
 lftp
@@ -63,6 +66,7 @@ modemmanager
 mtools
 nbd
 ndisc6
+networkmanager
 nfs-utils
 nilfs-utils
 nmap
@@ -79,6 +83,7 @@ partimage
 pcsclite
 ppp
 pptpclient
+pulseaudio
 pv
 qemu-guest-agent
 reflector
@@ -106,6 +111,7 @@ usbutils
 vim
 virtualbox-guest-utils-nox
 vpnc
+waybar
 wezterm-terminfo
 wireless-regdb
 wireless_tools
