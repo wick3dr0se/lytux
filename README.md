@@ -18,14 +18,14 @@ Just some of the key changes made from a base releng ArchISO:
 A list of some goals for Lytux in no particular order:
 - Include manual install instructions in live user home directory
 - Remove more unecessary packages
-- Remove systemd-boot and syslinux for GRUB to boot UEFI/BIOS & I9660 volumes
+- Remove systemd-boot and syslinux for GRUB to boot UEFI/BIOS & ISO-9660 volumes
 - Create/change logo and bootloader artwork
 - Switch to hardened kernel
 - Add firewall/iptables
 - Enable ssh by default
 
 ## Aquiring the ISO
-Download the Lytux ISO from the [Releases](https://github.com/yourusername/lytux/releases) page
+Download the Lytux ISO from the [releases](https://github.com/opensource-force/lytux/releases) page
 
 Otherwise build the latest Lytux ISO from source
 ```
@@ -37,7 +37,7 @@ mkarchiso -v -w lytux-iso -o lytux-iso iso
 ```
 
 ## Contributing
-Open an [issue](https://github.com/yourusername/lytux/issues) or fork this repo and submit a PR, linking any relevant open issues. Any contributions are much appreciated!
+Open an [issue](https://github.com/opensource-force/lytux/issues) or fork this repo and submit a PR, linking any relevant open issues. Any contributions are much appreciated!
 
 ## Acknowledgments
 Lytux is built upon the strong foundation of Arch Linux and the ArchISO project. Special thanks to the open-source community!
