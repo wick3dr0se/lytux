@@ -13,11 +13,21 @@ alias ll='ls -l'
 
 alias rm='rm -fr'
 
-prompt_command(){ if (( EUID )); then SYMBOL='$'; else SYMBOL='#'; fi; }
+prompt_command(){
+  if (( EUID )); then
+    SYMBOL='$'
+  else
+    SYMBOL='#'
+  fi
+
+  [[ $PWD =~ ^$HOME ]]&& { PWD="${PWD#$HOME}" PWD="~$PWD"; }
+  printf '\e[2;33m%s\e[m\n' "$PWD"
+}
 
 PROMPT_COMMAND=prompt_command
 
-PS1="\$USER@\$HOSTNAME \$((( \$? ))\
+PS1="\[\e[35m\]\$USER\[\e[m\]@\[\e[36m\]\$HOSTNAME\[\e[m\] \
+\$((( \$? ))\
   && printf '\[\e[31m\]$SYMBOL\[\e[m\]> '\
   || printf '\[\e[32m\]$SYMBOL\[\e[m\]> ')"
 
