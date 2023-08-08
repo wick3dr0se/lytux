@@ -6,26 +6,23 @@
 </div>
 
 ## Features and Modifications
-Just some of the key changes made from base releng ArchISO:
-- Created a 'live' user with the password 'live' for easy access to the live environment
-- Enabled testing repositories by default for the latest (potentially breaking) releases
-- Removed Zsh: Streamlined the shell selection to provide a consistent experience
-
-## Custom Environment
-Lytux comes with a customized environment that includes:
-- Bash - default and only shell
-- Kitty - terminal emulator
-- Hyprland - window manager/compositor
-- Hyprpaper - wallpaper setter
+Just some of the key changes made from a base releng ArchISO:
+- Created 'live' user with the password 'live'
+- Enabled `pacman` testing repositories by default
+- Removed `zsh` in favor of bash only
+- Moved from iw/iwd to networkmanager, including a systemd service file (enable)
+- Removed `archinstall`; Included an auto installer script
+- Included custom configurations for vim, .bashrc (prmopt) and more
 
 ## Objectives
 A list of some goals for Lytux in no particular order:
-- Remove GRUB bootloader: Use syslinux for BIOS booting and systemd-boot for UEFI
+- Include manual install instructions in live user home directory
+- Remove more unecessary packages
+- Remove systemd-boot and syslinux for GRUB to boot UEFI/BIOS & I9660 volumes
 - Create/change logo and bootloader artwork
 - Switch to hardened kernel
 - Add firewall/iptables
 - Enable ssh by default
-- Implement autologin
 
 ## Aquiring the ISO
 Download the Lytux ISO from the [Releases](https://github.com/yourusername/lytux/releases) page
