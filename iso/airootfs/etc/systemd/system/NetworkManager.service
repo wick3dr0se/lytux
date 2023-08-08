@@ -1,0 +1,13 @@
+[Unit]
+Description=Enable NetworkManager in live environment
+Before=multi-user.target
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl enable NetworkManager.service
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
