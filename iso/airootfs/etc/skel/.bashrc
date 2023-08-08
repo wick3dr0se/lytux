@@ -2,6 +2,7 @@
 
 [[ $- != *i* ]]&& return
 
+
 shopt -s autocd cdspell dirspell cdable_vars
 
 alias b='bash'
@@ -13,13 +14,13 @@ alias ll='ls -l'
 
 alias rm='rm -fr'
 
-prompt_command(){
-  if (( EUID )); then
-    SYMBOL='$'
-  else
-    SYMBOL='#'
-  fi
+if (( EUID )); then
+  SYMBOL='$'
+else
+  SYMBOL='#'
+fi
 
+prompt_command(){
   [[ $PWD =~ ^$HOME ]]&& { PWD="${PWD#$HOME}" PWD="~$PWD"; }
   printf '\e[2;33m%s\e[m\n' "$PWD"
 }
