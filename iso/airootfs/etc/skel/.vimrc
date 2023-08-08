@@ -10,7 +10,6 @@ filetype indent on
 syntax on
 
 set termguicolors
-colorscheme catppuccin_mocha
 
 set scrolloff=10
 set cursorline
