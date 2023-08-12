@@ -2,4 +2,4 @@ Welcome to [32;8;227;194;64mLytux[m!
 
 Manually install by following the ArchWiki installation guide: https://wiki.archlinux.org/title/Installation_guide or automate the installation with the installer scripts provided.
 
-Ethernet using DHCP should connect automatically. To authenticate with a Wi-Fi use `iwctl`; For WWAN use `nmcli`.
+Ethernet using DHCP should connect automatically. To authenticate with a Wi-Fi or WWAN use `nmtui`/`nmcli`.
