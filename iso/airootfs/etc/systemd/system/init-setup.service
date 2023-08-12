@@ -8,8 +8,7 @@ Before=archlinux-keyring-wkd-sync.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/bin/pacman-key --init
-ExecStart=/usr/bin/pacman-key --populate
+ExecStart=/usr/local/bin/init_setup.sh
 
 [Install]
 WantedBy=multi-user.target
