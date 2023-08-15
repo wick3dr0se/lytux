@@ -6,25 +6,33 @@ cursor="$ROWS"
 
 for((;;)){
   hover_opts
-  
+
   getin
   
   basic_keymap||{
     case $IN in
       h|\[D)
         update_opts 'Networking' "${networkingOptions[@]}"
-        
+
         draw_opts options
         break
       ;;
-      l|\[C)        
-        select_opt networkingOptions stagedPackages
-        
-        if (( selected )); then
-          draw_opts networkingOptions "Staged $HOVER for install!"
+      l|\[C)
+        if (( networking == 0 ))|| [[ ${opts[cursor-LINES]} == "$HOVER ✓" ]]; then
+          select_opt networkingOptions networking
+          
+          if (( networking )); then
+            stagedPackages=("$HOVER" "${stagedPackages[@]}")
+            draw_opts networkingOptions "$HOVER networking tool staged!"
+          else
+            stagedPackages=("${stagedPackages[@]:1}")
+            draw_opts networkingOptions "Unstaged $HOVER!"
+          fi
+
         else
-          draw_opts networkingOptions "Unstaged $HOVER!"
+          draw_opts networkingOptions 'Select only one networking tool!'
         fi
+
       ;;
       *) PAUSE=1;;
     esac

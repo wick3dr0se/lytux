@@ -18,14 +18,21 @@ for((;;)){
         break
       ;;
       l|\[C)
-        
-        select_opt localeOptions selectedLocales
-        
-        if (( selected )); then
-          draw_opts localeOptions "Queued $HOVER locale for generation!"
+        if (( locale == 0 ))|| [[ ${opts[cursor-LINES]} == "$HOVER ✓" ]]; then
+          select_opt localeOptions locale
+
+          if (( locale )); then
+            selectedLocale="$HOVER"
+            draw_opts localeOptions "Locale $HOVER queued!"
+          else
+            unset selectedLocale
+            draw_opts localeOptions "Deqeued $HOVER!"
+          fi
+
         else
-          draw_opts localeOptions "Deqeued $HOVER!"
+          draw_opts localeOptions 'Select only one locale!'
         fi
+
       ;;
       *) PAUSE=1;;
     esac

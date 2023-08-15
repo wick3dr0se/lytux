@@ -22,12 +22,12 @@ networkingOptions=(
   'iwd' # iwctl
 )
 stagedPackages=() # packages staged for install
-selectedTimezones=() # timezones to add
-selectedLocales=() # locales to be generated
+selectedTimezone= # timezones to add
+selectedLocale= # locales to be generated
+bootloader=0
+networking=0
+locale=0
 
-for _ in /usr/share/zoneinfo/*; do
-  : "${_##*/}"; timezoneOptions+=("$_")
-done
 
 i=0
 while read -r line; do

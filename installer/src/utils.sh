@@ -80,9 +80,9 @@ select_opt(){
   
   for _ in "${foo[@]}"; do
     case $_ in
-      "$HOVER ✓") foo[n]="$HOVER ✗"; selected=0;;
-      "$HOVER ✗") foo[n]="$HOVER ✓"; selected=1;;
-      "$HOVER") bar+=("$HOVER") foo[n]="$HOVER ✓"; selected=1;;
+      "$HOVER ✓") bar=0 foo[n]="$HOVER ✗";;
+      "$HOVER ✗") bar=1 foo[n]="$HOVER ✓";;
+      "$HOVER") bar=1 foo[n]="$HOVER ✓";;
     esac
     ((n++))
   done
