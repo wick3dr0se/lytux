@@ -1,8 +1,31 @@
 #!/bin/bash
 
+#set -eEu
+
+networking=0
+locale=0
+bootloader=0
+
+networkingOptions=(
+  'iwd' # iwctl
+  'networkmanager (recommended)' # nmcli/nmtui
+  'wpa_supplicant' # systemd-networkd
+)
+
+while read -r line; do
+  if (( ${i:=0} == 18 )); then
+    localeOptions+=("${line#\#}")
+  else
+    ((i++))
+  fi
+done </etc/locale.gen
+unset i line
+
+selectedLocale= # locales to be generated
+
 installPackages=(
   'base' # system
-  'linux' 'linux-firmware' 'linux-headers' # kernel
+  'linux' 'linux-firmware' 'linux-headers' # ker
   'kitty' # terminal
   'pulseaudio' # audio
   'bluez' # bluetooth
@@ -12,43 +35,44 @@ installPackages=(
   'hyprpaper' # wallpaper setter
   'waybar' # status bar
 )
-bootloaderOptions=(
-  'grub' # bios & grub
-  'syslinux' # bios
-  'systemd-boot' # uefi
-)
-networkingOptions=(
-  'networkmanager' # nmcli/nmtui
-  'iwd' # iwctl
-)
-stagedPackages=() # packages staged for install
-selectedTimezone= # timezones to add
-selectedLocale= # locales to be generated
-bootloader=0
-networking=0
-locale=0
 
-
-i=0
-while read -r line; do
-  if (( i == 18 )); then
-    localeOptions+=("${line#\#}")
-  else
-    ((i++))
-  fi
-done </etc/locale.gen
-
-i=0
 for _ in src/*; do
   : "${_#src/}"; : "${_%.sh}"
-
-  [[ $_ == 'utils' ]]||{
-    options+=("${_^}") STAGED["$_"]="$i"
-    ((i++))
-  }
+  [[ $_ == 'utils' ]]|| options+=("${_^}")
 done
 
 . src/utils.sh
+
+: '/sys/firmware/efi/fw_platform_size'
+[[ -f $_ ]]&& read -rn 2 <"$_"
+if (( $REPLY == 64 )); then
+  _msg 'System booted in UEFI mode; Bootloader set to systemd-boot.'
+else
+  _msg 'System booted in BIOS or CSM mode; Bootloader set to GRUB.'
+  installedPackages+=('grub')
+fi
+
+timedatectl set-ntp true
+timedatectl status
+
+if [[ -d /mnt/boot ]]; then
+  _msg 'Boot partition found!'
+else
+  _fatal 'No boot partition found!'
+fi
+
+if [[ -d /mnt/root ]]; then
+  _msg "$(df -t --noheadings /mnt) root partition found!"
+else
+  _fatal 'No root partition found!'
+fi
+
+swapon --show|| _warn 'No swap partition or file found!'
+
+# mirrors
+
+_msg "Installing ${#installedPackages[@]} packages to new root!"
+pacstrap -K
 
 init_term
 draw_opts options

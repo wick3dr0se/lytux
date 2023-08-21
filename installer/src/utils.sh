@@ -1,19 +1,25 @@
 #!/bin/bash
 
+_msg(){ printf '[\e[32m>\e[m]: %s\n' "$1"; }
+
+_warn(){ printf '[\e[33m>\e[m]: %s\n' "$1"; }
+
+_fatal(){ printf '[\e[31m>\e[m]: %s\n' "$1"; exit 1; }
+
 init_term(){
   shopt -s checkwinsize; (:;:)
   ((ROWS=LINES-1))
 
-  printf '\e[?1049h\e[?25l'
+  printf '\e[?1049h\e[?25l\e[?7l'
 }
 
 end(){
-  printf '\e[?1049l\e[?25h'
+  printf '\e[?1049l\e[?25h\e[?7h'
   
   exit
 }
 
-sbar(){ printf '\e[%dH\e[2K\e[1;43;30mLytux\e[m %s' "$LINES" "$1"; }
+sbar(){ printf '\e[%dH\e[2K\e[43;30mLytux\e[m %s' "$LINES" "$1"; }
 
 getin(){ read -rsn 1 IN; [[ $IN == $'\e' ]]&& read -rsn 2 IN; IN="${IN,}"; }
 
