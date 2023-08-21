@@ -13,11 +13,7 @@ init_term(){
   printf '\e[?1049h\e[?25l\e[?7l'
 }
 
-end(){
-  printf '\e[?1049l\e[?25h\e[?7h'
-  
-  exit
-}
+deinit_term(){ printf '\e[?1049l\e[?25h\e[?7h'; }
 
 sbar(){ printf '\e[%dH\e[2K\e[43;30mLytux\e[m %s' "$LINES" "$1"; }
 
@@ -73,7 +69,7 @@ scroll_opts(){
 
 basic_keymap(){
   case $IN in
-    q) end;;
+    q) deinit_term; exit;;
     j|\[B) ((cursor++));;
     k|\[A) ((cursor--));;
     *) false;;

@@ -2,9 +2,30 @@
 
 #set -eEu
 
-networking=0
+UEFI=0
 locale=0
-bootloader=0
+networking=0
+
+while read -r line; do
+  if [[ $line == 'vendor_id'* ]]; then
+    VENDOR="${line#*:}" VENDOR="${VENDOR//[[:space:]]}"
+    case $VENDOR in
+      AuthenticAMD) UCODE='amd-ucode';; # amd microcode updates
+      GenuineIntel) UCODE='intel-ucode';; # intel microcode udpates
+    esac
+    
+    break
+  fi
+done </proc/cpuinfo
+
+while read -r line; do
+  if (( ${i:=0} == 18 )); then
+    localeOptions+=("${line#\#}")
+  else
+    ((++i))
+  fi
+done </etc/locale.gen
+unset i line
 
 networkingOptions=(
   'iwd' # iwctl
@@ -12,20 +33,12 @@ networkingOptions=(
   'wpa_supplicant' # systemd-networkd
 )
 
-while read -r line; do
-  if (( ${i:=0} == 18 )); then
-    localeOptions+=("${line#\#}")
-  else
-    ((i++))
-  fi
-done </etc/locale.gen
-unset i line
-
 selectedLocale= # locales to be generated
 
 installPackages=(
+  "$UCODE" # either amd or interl microcode updates
   'base' # system
-  'linux' 'linux-firmware' 'linux-headers' # ker
+  'linux' 'linux-firmware' 'linux-headers' # kernel
   'kitty' # terminal
   'pulseaudio' # audio
   'bluez' # bluetooth
@@ -34,45 +47,22 @@ installPackages=(
   'hyprland' # compositor/wm
   'hyprpaper' # wallpaper setter
   'waybar' # status bar
+  'firefox' # browser
 )
 
-for _ in src/*; do
-  : "${_#src/}"; : "${_%.sh}"
-  [[ $_ == 'utils' ]]|| options+=("${_^}")
-done
-
-. src/utils.sh
+options=(
+  'locale'
+  'networking'
+)
 
 : '/sys/firmware/efi/fw_platform_size'
 [[ -f $_ ]]&& read -rn 2 <"$_"
-if (( $REPLY == 64 )); then
-  _msg 'System booted in UEFI mode; Bootloader set to systemd-boot.'
-else
-  _msg 'System booted in BIOS or CSM mode; Bootloader set to GRUB.'
-  installedPackages+=('grub')
-fi
 
-timedatectl set-ntp true
-timedatectl status
+(( $REPLY == 64 ))&& UEFI=1
 
-if [[ -d /mnt/boot ]]; then
-  _msg 'Boot partition found!'
-else
-  _fatal 'No boot partition found!'
-fi
+. src/utils.sh
 
-if [[ -d /mnt/root ]]; then
-  _msg "$(df -t --noheadings /mnt) root partition found!"
-else
-  _fatal 'No root partition found!'
-fi
-
-swapon --show|| _warn 'No swap partition or file found!'
-
-# mirrors
-
-_msg "Installing ${#installedPackages[@]} packages to new root!"
-pacstrap -K
+trap 'deinit_term; exit 1' INT EXIT
 
 init_term
 draw_opts options
@@ -80,6 +70,8 @@ sbar
 
 cursor="$ROWS"
 for((;;)){
+  (( networking&& locale ))&& . src/newroot-setup.sh
+
   hover_opts
 
   getin

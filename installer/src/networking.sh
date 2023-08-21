@@ -22,10 +22,10 @@ for((;;)){
           select_opt networkingOptions networking
           
           if (( networking )); then
-            installedPackages=("${HOVER% *}" "${installedPackages[@]}")
+            installPackages=("${HOVER% *}" "${installPackages[@]}")
             draw_opts networkingOptions "${HOVER% *} networking tool staged!"
           else
-            installedPackages=("${installedPackages[@]:1}")
+            installPackages=("${installPackages[@]:1}")
             draw_opts networkingOptions "Unstaged ${HOVER% *}!"
           fi
 
