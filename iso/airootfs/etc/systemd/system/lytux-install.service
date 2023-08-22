@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Lytux Installer After Network Connectivity
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/local/lytux-install
+
+[Install]
+WantedBy=multi-user.target

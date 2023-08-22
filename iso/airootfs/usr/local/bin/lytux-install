@@ -2,6 +2,12 @@
 
 #set -eEu
 
+if [[ -f /usr/local/bin/lytux-install ]]; then
+  srcPath='/usr/local/share/lytux-install'
+else
+  srcPath='src'
+fi
+
 UEFI=0
 locale=0
 networking=0
@@ -44,6 +50,7 @@ installPackages=(
   'bluez' # bluetooth
   'sudo' # superuser
   'vim' # editor
+  'sed' # stream editor
   'hyprland' # compositor/wm
   'hyprpaper' # wallpaper setter
   'waybar' # status bar
@@ -60,7 +67,7 @@ options=(
 
 (( $REPLY == 64 ))&& UEFI=1
 
-. src/utils.sh
+. "$srcPath/utils.sh"
 
 trap 'deinit_term; exit 1' INT EXIT
 
@@ -70,7 +77,7 @@ sbar
 
 cursor="$ROWS"
 for((;;)){
-  (( networking&& locale ))&& . src/newroot-setup.sh
+  (( networking&& locale ))&& . "$srcPath/newroot-setup.sh"
 
   hover_opts
 
@@ -79,7 +86,7 @@ for((;;)){
     case $IN in
       l|\[C)
         for _ in "${options[@]% *}"; do
-          [[ $HOVER == "$_" ]]&& . "src/${HOVER,}.sh"
+          [[ $HOVER == "$_" ]]&& . "$srcPath/${HOVER,}.sh"
         done
       ;;
       *) PAUSE=1;;

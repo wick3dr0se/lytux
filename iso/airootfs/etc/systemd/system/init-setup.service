@@ -8,7 +8,9 @@ Before=archlinux-keyring-wkd-sync.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/local/bin/init_setup.sh
+ExecStart=systemd-machine-id-setup
+ExecStart=pacman-key --init
+ExecStart=pacman-key --populate
 
 [Install]
 WantedBy=multi-user.target
