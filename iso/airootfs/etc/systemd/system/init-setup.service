@@ -8,7 +8,6 @@ Before=archlinux-keyring-wkd-sync.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=systemd-machine-id-setup
 ExecStart=pacman-key --init
 ExecStart=pacman-key --populate
 
