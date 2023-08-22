@@ -41,5 +41,5 @@ pacstrap -GK /mnt "${installPackages[@]} $UCODE"
 _msg 'Generating file system table!'
 genfstab -U /mnt >/mnt/etc/fstab
 
-cp -r "$srcPath/chroot.sh" /mnt
+cp -r "$srcPath/chroot-install.sh" /mnt
 arch-chroot /mnt . chroot-install.sh
