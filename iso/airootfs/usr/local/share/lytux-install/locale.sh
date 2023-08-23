@@ -12,7 +12,7 @@ for((;;)){
   basic_keymap||{
     case $IN in
       h|\[D)
-        update_opts 'Locale' "${localeOptions[@]}"
+        update_opts 'locale' "${localeOptions[@]}"
 
         draw_opts options
         break

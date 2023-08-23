@@ -12,7 +12,7 @@ for((;;)){
   basic_keymap||{
     case $IN in
       h|\[D)
-        update_opts 'Networking' "${networkingOptions[@]}"
+        update_opts 'networking' "${networkingOptions[@]}"
 
         draw_opts options
         break
