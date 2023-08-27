@@ -33,6 +33,7 @@ gptfdisk
 hdparm
 hyperv
 irssi
+iwctl
 jfsutils
 kitty-terminfo
 less
@@ -58,7 +59,6 @@ modemmanager
 mtools
 nbd
 ndisc6
-networkmanager
 nfs-utils
 nilfs-utils
 nmap
