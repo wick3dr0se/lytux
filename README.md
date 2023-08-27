@@ -5,23 +5,33 @@
 <a href="https://discord.gg/W4mQqNnfSq"><img src="https://discordapp.com/api/guilds/913584348937207839/widget.png?style=shield"/></a>
 </div>
 
-## Features and Modifications
-Just some of the key changes made from a base releng ArchISO:
-- Created 'live' user with the password 'live'
-- Enabled pacman testing repositories by default
+## ISO Modifications
+Just some of the key changes made from a baseline ArchISO image:
 - Removed Zsh in favor of BASH only
-- Moved from iw/iwd to networkmanager, including a systemd service file
-- Removed archinstall and all arch custom scripts
-- Removed GRUB bootloader; BIOS boot w/ syslinux & UEFI boot w/ systemd-boot
-- Included custom configurations for vim, .bashrc (prmopt) and more
+- Removed GRUB and rEFind bootloader; BIOS boot w/ syslinux & UEFI boot w/ systemd-boot
+- Disabled mouse and audio support
+- Removed tons of unecessary bloat (no edge cases)
+- Removed archinstall and all Arch custom scripts
+- Included custom configurations for TTY prompt, vim and more
+- Created Lytux TUI auto installer
 
-## Objectives
-A list of some goals for Lytux in no particular order:
-- Include manual install instructions
-- Create TUI installer
-- Create/change logo
-- Create bootloader/wallpaper artwork
-- Enable ssh by default
+## Installer Features
+On top of the standard Arch Linux installation process:
+- Setup networking via `nc` (wraps `iwctl` or `nmcli`)
+- Partitioning, filesystems and mounting via `ap` (wraps `parted`)
+- Handles systemd-boot for UEFI boot & GRUB for BIOS boot
+- Installs the correct CPU microcode updates
+- Configures timezone/locales
+- Creates specified user with superuser elevation
+- Sets then locks root user password
+- Enables bluetooth & audio
+
+## ToDo
+ISO:
+- Create custom bootloader splash screen
+- Create logo & artwork
+Installer:
+- Handle various environments & setups
 
 ## Aquiring the ISO
 Download the Lytux ISO from the [releases](https://github.com/opensource-force/lytux/releases) page
