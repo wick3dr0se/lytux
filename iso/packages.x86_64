@@ -4,7 +4,6 @@ archinstall
 b43-fwcutter
 base
 bind
-brltty
 broadcom-wl
 btrfs-progs
 cloud-init
