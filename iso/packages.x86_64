@@ -1,10 +1,14 @@
+alsa-utils
+amd-ucode
 arch-install-scripts
+archinstall
 b43-fwcutter
 base
 bind
 brltty
 broadcom-wl
 btrfs-progs
+clonezilla
 cloud-init
 cryptsetup
 darkhttpd
@@ -30,9 +34,13 @@ gnu-netcat
 gpart
 gpm
 gptfdisk
+grml-zsh-config
+grub
 hdparm
 hyperv
+intel-ucode
 irssi
+iw
 iwd
 jfsutils
 kitty-terminfo
@@ -44,8 +52,10 @@ linux
 linux-atm
 linux-firmware
 linux-firmware-marvell
+livecd-sounds
 lsscsi
 lvm2
+lynx
 man-db
 man-pages
 mc
@@ -57,6 +67,7 @@ mkinitcpio-archiso
 mkinitcpio-nfs-utils
 modemmanager
 mtools
+nano
 nbd
 ndisc6
 nfs-utils
@@ -77,6 +88,7 @@ ppp
 pptpclient
 pv
 qemu-guest-agent
+refind
 reflector
 reiserfsprogs
 rp-pppoe
@@ -85,6 +97,7 @@ rxvt-unicode-terminfo
 screen
 sdparm
 sg3_utils
+smartmontools
 sof-firmware
 squashfs-tools
 sudo
@@ -109,3 +122,4 @@ wpa_supplicant
 wvdial
 xfsprogs
 xl2tpd
+zsh
