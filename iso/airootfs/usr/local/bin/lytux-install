@@ -11,10 +11,14 @@ STACK=(
 installPackages=(
   'base'
   'linux' 'linux-firmware' 'linux-headers'
-  'networkmanager'
   'sudo'
-  'vim'
+
+  'networkmanager'
+  'bluez'
+  'pulseaudio'
+
   'kitty'
+  'vim'
   'hyprland' 'hyprpaper' 'waybar'
 )
 
