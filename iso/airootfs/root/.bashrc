@@ -39,8 +39,8 @@ PROMPT_COMMAND=prompt_command
 
 PS1="\[$userColor\]\$USER\[\e[m\]@\[\e[38;2;255;176;0m\]\$HOSTNAME\[\e[m\] \
 \$((( \$? ))\
-  && printf '\[$errColor\]$userSymbol\[\e[m\]≫ '\
-  || printf '\[$sucColor\]$userSymbol\[\e[m\]≫ ')"
+  && printf '\[$errColor\]$userSymbol\[\e[m\]> '\
+  || printf '\[$sucColor\]$userSymbol\[\e[m\]> ')"
 
-PS4="-[\e[33m${BASH_SOURCE[0]%.sh}\e[m: \e[32m${LINENO}\e[m]\
-  ${FUNCNAME[0]:+${FUNCNAME[0]}(): }"
+PS4="-[\e[33m${BASH_SOURCE[0]%.sh}\e[m: \e[32m$LINENO\e[m]\
+  ${FUNCNAME:+${FUNCNAME[0]}(): }"
