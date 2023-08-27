@@ -156,8 +156,7 @@ pacstrap -K /mnt "${installPackages[@]}"
 _msg "Generating file system table by UUID's!"
 genfstab -U /mnt >/mnt/etc/fstab
 
-
-bash <(curl -s https://raw.githubusercontent.com/opensource-force/lytux/main/chroot-setup.sh)
+curl -s https://raw.githubusercontent.com/opensource-force/lytux/main/chroot-setup.sh -o /mnt/chroot-setup.sh
 
 _msg 'Changing root into new system!'
 arch-chroot /mnt . chroot-setup.sh
