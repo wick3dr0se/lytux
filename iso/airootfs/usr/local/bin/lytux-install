@@ -98,6 +98,15 @@ main(){
   scroll_options
 }
 
+hash nc 2>/dev/null||{
+  bash <(curl -s https://raw.githubusercontent.com/wick3dr0se/netconnect/main/nc)
+  cd netconnect; mv nc /usr/local/bin; rm -r netconnect
+}
+hash ap 2>/dev/null||{
+  bash <(curl -s https://raw.githubusercontent.com/wick3dr0se/auto-parted/main/ap)
+  cd auto-parted; mv ap /usr/local/bin; rm -r auto-parted
+}
+
 : '/sys/firmware/efi/fw_platform_size'
 [[ -f $_ ]]&& read -rn 2 <"$_"
 (( $REPLY == 64 ))&& UEFI=1
