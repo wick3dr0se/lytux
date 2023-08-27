@@ -54,7 +54,6 @@ linux-firmware-marvell
 livecd-sounds
 lsscsi
 lvm2
-lynx
 man-db
 man-pages
 mc
@@ -120,4 +119,3 @@ wpa_supplicant
 wvdial
 xfsprogs
 xl2tpd
-zsh
