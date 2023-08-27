@@ -1,0 +1,166 @@
+#!/bin/bash
+
+import std/{ansi,tui}
+
+trap deinit_term EXIT
+trap 'exit 1' INT
+
+STACK=(
+  'networking'
+)
+installPackages=(
+  'base'
+  'linux' 'linux-firmware' 'linux-headers'
+  'sudo'
+
+  'networkmanager'
+  'bluez'
+  'pulseaudio'
+
+  'kitty'
+  'vim'
+  'hyprland' 'hyprpaper' 'waybar'
+)
+
+_ask(){
+  printf '\e[33m%s\e[m - \e[3%dm%s\e[m(): %b' \
+    "${BASH_SOURCE[0]##*/}" "${2:-2}" "${3:-${FUNCNAME[1]}}" "$1"
+}
+
+_msg(){ _ask "$1\n" "${2:-4}" "${FUNCNAME[1]}"; }
+
+init_term(){
+  term_size
+  ((ROWS=LINES-1))
+
+  vt buffer:alt cursor:hide
+}
+
+deinit_term(){
+  vt buffer:main cursor:show
+}
+
+status_bar(){
+  vt move:pos:"$LINES" erase:row
+  sgr fg:yellow 'lytux' "${@:+: $*}"
+}
+
+draw_options(){
+  unset SKIP hoverHist
+  cursor="$ROWS"
+
+  vt move:pos:"$ROWS"
+  printf '%s\n' "${STACK[@]}"
+}
+
+hover_options(){
+  hover="${STACK[$1-LINES]% -}"
+  vt move:pos:"$1"
+  sgr mode:inverse "$hover"
+
+  hoverHist+=("${1}H$hover")
+  skip&&{
+    printf '\e[%s' "${hoverHist[0]}"
+    hoverHist=("${hoverHist[@]:1}")
+  }; :
+}
+
+scroll_options(){
+  if (( cursor > ROWS )); then
+    ((cursor=LINES-${#STACK[@]}))
+  elif (( cursor < LINES-${#STACK[@]} )); then
+    cursor="$ROWS"
+  fi
+}
+
+mark_option(){
+  local i=0
+  for _ in "${STACK[@]}"; do
+    [[ $_ == "$hover" ]]&&{
+      pop "$i"
+      STACK[i]="$1"
+    }
+    ((i++))
+  done
+}
+
+main(){
+  hover_options "$cursor"
+
+  status_bar
+
+  for((;;)){
+    read_keys
+    case $KEY in
+      [qQ]) return;;
+      [jJsS]|\[B) ((cursor++));;
+      [kKwW]|\[A) ((cursor--));;
+      [lLdD]|\[C) echo;;
+    esac
+  }
+
+  scroll_options
+}
+
+hash nc 2>/dev/null||{
+  bash <(curl -s https://raw.githubusercontent.com/wick3dr0se/netconnect/main/nc)
+  cd netconnect; mv nc /usr/local/bin; rm -r netconnect
+}
+hash ap 2>/dev/null||{
+  bash <(curl -s https://raw.githubusercontent.com/wick3dr0se/auto-parted/main/ap)
+  cd auto-parted; mv ap /usr/local/bin; rm -r auto-parted
+}
+
+: '/sys/firmware/efi/fw_platform_size'
+[[ -f $_ ]]&& read -rn 2 <"$_"
+(( $REPLY == 64 ))&& UEFI=1
+
+wipe_term
+
+if (( UEFI )); then
+  _msg 'Bootloader set to systemd-boot!'
+else
+  _msg 'Bootloader set to GRUB!'
+  installPackages+=('grub' 'os-prober')
+fi
+
+until (( connected )); do
+  nc&& connected=1
+done
+
+timedatectl set-ntp true
+
+ap || exit 1
+
+while read -r line; do
+  if [[ $line == 'vendor_id'* ]]; then
+    VENDOR="${line#*:}" VENDOR="${VENDOR//[[:space:]]}"
+    case $VENDOR in
+      AuthenticAMD)
+        _msg 'AMD CPU detected. Installing microcode updates..'
+        installPackages+=('amd-ucode')
+      ;;
+      GenuineIntel)
+        _msg 'Intel CPU detected. Installing microcode updates..'
+        installPackages+=('intel-ucode')
+      ;;
+    esac
+    
+    break
+  fi
+done </proc/cpuinfo
+
+_msg 'Installing essential packages!'
+pacstrap -K /mnt "${installPackages[@]}"
+
+_msg "Generating file system table by UUID's!"
+genfstab -U /mnt >/mnt/etc/fstab
+
+curl -s https://raw.githubusercontent.com/opensource-force/lytux/main/chroot-setup.sh -o /mnt/chroot-setup.sh
+
+_msg 'Changing root into new system!'
+arch-chroot /mnt . chroot-setup.sh
+
+#init_term
+#draw_options
+#main
