@@ -1,101 +1,154 @@
 #!/bin/bash
 
-#set -eEu
+import std/{ansi,tui}
 
-#if [[ -f ${BASH_SOURCE[0]##*/} ]]; then
-#  srcPath='src'
-#else
-#  srcPath="/usr/local/share/${BASH_SOURCE[0]##*/}"
-#fi
+trap deinit_term EXIT
+trap 'exit 1' INT
 
-srcPath="$HOME/git/lytux/iso/airootfs/usr/local/share/lytux-install"
-
-UEFI=0
-wifi=0
-connected=0
-locale=0
-networking=0
-
-options=(
+STACK=(
   'networking'
-  'locale'
 )
+installPackages=(
+  'base'
+  'linux' 'linux-firmware' 'linux-headers'
+  'networkmanager'
+  'sudo'
+  'vim'
+  'kitty'
+  'hyprland' 'hyprpaper' 'waybar'
+)
+
+_ask(){
+  printf '\e[33m%s\e[m - \e[3%dm%s\e[m(): %b' \
+    "${BASH_SOURCE[0]##*/}" "${2:-2}" "${3:-${FUNCNAME[1]}}" "$1"
+}
+
+_msg(){ _ask "$1\n" "${2:-4}" "${FUNCNAME[1]}"; }
+
+init_term(){
+  term_size
+  ((ROWS=LINES-1))
+
+  vt buffer:alt cursor:hide
+}
+
+deinit_term(){
+  vt buffer:main cursor:show
+}
+
+status_bar(){
+  vt move:pos:"$LINES" erase:row
+  sgr fg:yellow 'lytux' "${@:+: $*}"
+}
+
+draw_options(){
+  unset SKIP hoverHist
+  cursor="$ROWS"
+
+  vt move:pos:"$ROWS"
+  printf '%s\n' "${STACK[@]}"
+}
+
+hover_options(){
+  hover="${STACK[$1-LINES]% -}"
+  vt move:pos:"$1"
+  sgr mode:inverse "$hover"
+
+  hoverHist+=("${1}H$hover")
+  skip&&{
+    printf '\e[%s' "${hoverHist[0]}"
+    hoverHist=("${hoverHist[@]:1}")
+  }; :
+}
+
+scroll_options(){
+  if (( cursor > ROWS )); then
+    ((cursor=LINES-${#STACK[@]}))
+  elif (( cursor < LINES-${#STACK[@]} )); then
+    cursor="$ROWS"
+  fi
+}
+
+mark_option(){
+  local i=0
+  for _ in "${STACK[@]}"; do
+    [[ $_ == "$hover" ]]&&{
+      pop "$i"
+      STACK[i]="$1"
+    }
+    ((i++))
+  done
+}
+
+main(){
+  hover_options "$cursor"
+
+  status_bar
+
+  for((;;)){
+    read_keys
+    case $KEY in
+      [qQ]) return;;
+      [jJsS]|\[B) ((cursor++));;
+      [kKwW]|\[A) ((cursor--));;
+      [lLdD]|\[C) echo;;
+    esac
+  }
+
+  scroll_options
+}
 
 : '/sys/firmware/efi/fw_platform_size'
 [[ -f $_ ]]&& read -rn 2 <"$_"
 (( $REPLY == 64 ))&& UEFI=1
 
-ip link show eth0 2>/dev/null||{ options+=('wifi') selectedWifi=; }
+wipe_term
+
+if (( UEFI )); then
+  _msg 'Bootloader set to systemd-boot!'
+else
+  _msg 'Bootloader set to GRUB!'
+  installPackages+=('grub' 'os-prober')
+fi
+
+until (( connected )); do
+  nc&& connected=1
+done
+
+timedatectl set-ntp true
+
+ap || exit 1
 
 while read -r line; do
   if [[ $line == 'vendor_id'* ]]; then
     VENDOR="${line#*:}" VENDOR="${VENDOR//[[:space:]]}"
     case $VENDOR in
-      AuthenticAMD) UCODE='amd-ucode';; # amd microcode updates
-      GenuineIntel) UCODE='intel-ucode';; # intel microcode udpates
+      AuthenticAMD)
+        _msg 'AMD CPU detected. Installing microcode updates..'
+        installPackages+=('amd-ucode')
+      ;;
+      GenuineIntel)
+        _msg 'Intel CPU detected. Installing microcode updates..'
+        installPackages+=('intel-ucode')
+      ;;
     esac
     
     break
   fi
 done </proc/cpuinfo
 
-while read -r line; do
-  if (( ${i:=0} == 18 )); then
-    localeOptions+=("${line#\#}")
-  else
-    ((++i))
-  fi
-done </etc/locale.gen
-unset i line
-selectedLocale= # locales to be generated
+_msg 'Installing essential packages!'
+pacstrap -K /mnt "${installPackages[@]}"
 
-networkingOptions=(
-  'iwd' # iwctl
-  'networkmanager (recommended)' # nmcli/nmtui
-  'wpa_supplicant' # systemd-networkd
-)
+_msg "Generating file system table by UUID's!"
+genfstab -U /mnt >/mnt/etc/fstab
 
-installPackages=(
-  "$UCODE" # either amd or interl microcode updates
-  'base' # system
-  'linux' 'linux-firmware' 'linux-headers' # kernel
-  'kitty' # terminal
-  'pulseaudio' # audio
-  'bluez' # bluetooth
-  'sudo' # superuser
-  'vim' # editor
-  'sed' # stream editor
-  'hyprland' # compositor/wm
-  'hyprpaper' # wallpaper setter
-  'waybar' # status bar
-  'firefox' # browser
-)
 
-. "$srcPath/utils.sh"
+bash <(curl -s https://raw.githubusercontent.com/opensource-force/lytux/main/chroot-setup.sh)
 
-trap 'deinit_term; exit 1' INT EXIT
+_msg 'Changing root into new system!'
+arch-chroot /mnt . chroot-setup.sh
 
-init_term
-draw_opts options
-sbar
-
-cursor="$ROWS"
-for((;;)){
-  #(( networking&& locale ))&& . "$srcPath/newroot-setup.sh"
-
-  hover_opts
-
-  getin
-  basic_keymap||{
-    case $IN in
-      l|\[C)
-        for _ in "${options[@]% *}"; do
-          [[ $HOVER == "$_" ]]&& . "$srcPath/${HOVER,}.sh"
-        done
-      ;;
-      *) PAUSE=1;;
-    esac
-  }
-
-  scroll_opts
-}
+#init_term
+#draw_options
+#main
