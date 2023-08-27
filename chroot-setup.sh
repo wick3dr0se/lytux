@@ -1,7 +1,7 @@
 #!/bin/bash
 
 _msg 'Setting timezone to UTC!\n'
-#ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 
 hwclock --systohc
 
@@ -42,6 +42,7 @@ until [[ $rootPass ]]; do
 done
 _msg 'Root password set!'
 
+_msg 'Enabling bluetooth and networking daemons!'
 systemctl enable bluetooth NetworkManager
 
 if (( UEFI )); then
@@ -59,6 +60,7 @@ if (( UEFI )); then
   for _ in "${loaderEntry[@]}"; do
     echo "$_" >>/boot/loader/entries/lytux.conf
   done
+  _msg 'Created Lytux systemd-boot loader config'
   
   loaderConf=(
     'default lytux'
@@ -72,6 +74,10 @@ if (( UEFI )); then
   done
 
   bootctl list
+
+  _msg 'Systemd-boot installed!'
 else
   grub-install --target=i386-pc "$(df -h /| awk 'FNR==2 {print $1}')"
+
+  _msg 'GRUB installed!'
 fi
